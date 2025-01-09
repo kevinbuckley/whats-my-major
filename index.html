@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Filter Local JSON</title>
+</head>
+<body>
+<pre id="output"></pre>
+<div id="choices"></div>
+<div id="remaining"></div>
+<script>
+  // Load the JSON file using a standard fetch
+  fetch('/mydatanow.json')
+    .then(response => response.json())
+    .then(data => {
+      // Filter for items with 'BS' in the program field
+      let filtered = data["results"].filter(item =>
+        item.program.includes('BS') &&
+        !item.body.includes('Only open to current students')
+      );
+
+      function presentChoices() {
+        if (filtered.length < 75) {
+          document.getElementById('output').innerHTML = "Here's your top 10!<br>" + filtered.map(item => "<h2>" + item.title + "</h2><br><br>" + item.body).join('\n');
+          document.getElementById('choices').innerHTML = '';
+          document.getElementById('remaining').innerHTML = '';
+          return;
+        }
+
+        const choice1 = filtered[Math.floor(Math.random() * filtered.length)];
+        let choice2;
+        do {
+          choice2 = filtered[Math.floor(Math.random() * filtered.length)];
+        } while (choice1 === choice2);
+
+        document.getElementById('choices').innerHTML = `
+          <button id="choice1">${choice1.title}</button>
+          <button id="choice2">${choice2.title}</button>
+        `;
+
+        document.getElementById('choice1').onclick = () => {
+          filtered = filtered.filter(item => item !== choice2);
+          document.getElementById('remaining').innerHTML = filtered.length + ' majors remaining!';
+          presentChoices();
+        };
+
+        document.getElementById('choice2').onclick = () => {
+          filtered = filtered.filter(item => item !== choice1);
+          document.getElementById('remaining').innerHTML = filtered.length + ' majors remaining!';
+          presentChoices();
+        };
+      }
+      document.getElementById('remaining').innerHTML = filtered.length + ' majors remaining!';
+          
+
+      presentChoices();
+    })
+    .catch(error => console.error('Error fetching data:', error));
+</script>
+</body>
+</html>
