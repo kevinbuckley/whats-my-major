@@ -45,7 +45,10 @@
     }
     #vs {
       font-size: 30px;
-      margin: 0 20px;
+      margin: 30px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     #remaining {
       margin-top: 20px;
@@ -73,6 +76,17 @@
     .output-item p {
       margin: 10px 0 0;
       white-space: normal;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .button-container button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -103,7 +117,7 @@
       });
 
       function presentChoices() {
-        if (filtered.length < 5) {
+        if (filtered.length <= 5) {
           document.getElementById('output').innerHTML = "Here's your top 5!<br>" + filtered.map(item => `
             <div class="output-item">
               <h2>${item.title}</h2>
@@ -126,7 +140,13 @@
             <div class="choice" id="choice1">${choice1.title}</div>
             <div class="description">${choice1.body}</div>
           </div>
-          <div id="vs">VS</div>
+          <div id="vs">
+            VS
+            <div class="button-container">
+              <button id="keepBoth">Keep Both</button>
+              <button id="keepNeither">Keep Neither</button>
+            </div>
+          </div>
           <div class="choice-container">
             <div class="choice choice-right" id="choice2">${choice2.title}</div>
             <div class="description">${choice2.body}</div>
@@ -141,6 +161,16 @@
 
         document.getElementById('choice2').onclick = () => {
           filtered = filtered.filter(item => item !== choice1);
+          document.getElementById('remaining').innerHTML = filtered.length + ' majors remaining!';
+          presentChoices();
+        };
+
+        document.getElementById('keepBoth').onclick = () => {
+          presentChoices();
+        };
+
+        document.getElementById('keepNeither').onclick = () => {
+          filtered = filtered.filter(item => item !== choice1 && item !== choice2);
           document.getElementById('remaining').innerHTML = filtered.length + ' majors remaining!';
           presentChoices();
         };
