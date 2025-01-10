@@ -91,6 +91,8 @@
         item.program.includes('BS') &&
         !item.college.includes('Nursing') &&
         !item.college.includes('School of Education') &&
+        !item.college.includes('Antoinette Westphal College of Media Arts & Design') &&
+        !item.college.includes('Bennett S. LeBow College of Business') &&
         !item.body.includes('Only open to current students')
       ).map(item => {
         const firstParagraphMatch = item.body.match(/<p>(.*?)<\/p>/);
