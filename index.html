@@ -41,6 +41,7 @@
       margin-top: 10px;
       width: 400px;
       text-align: left;
+      word-break: break-word;
     }
     #vs {
       font-size: 30px;
@@ -54,6 +55,25 @@
       font-size: 36px;
       margin-top: 20px;
     }
+    #output {
+      width: 50%;
+      margin: 0 auto;
+    }
+    .output-item {
+      border: 2px solid #fff;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #333;
+      word-break: break-word;
+    }
+    .output-item h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .output-item p {
+      margin: 10px 0 0;
+      white-space: normal;
+    }
   </style>
 </head>
 <body>
@@ -63,18 +83,29 @@
 <div id="choices"></div>
 <script>
   // Load the JSON file using a standard fetch
-  fetch('/mydatanow.json')
+  fetch('https://kevinbuckley.github.io/whats-my-major/mydatanow.json')
     .then(response => response.json())
     .then(data => {
       // Filter for items with 'BS' in the program field
       let filtered = data["results"].filter(item =>
         item.program.includes('BS') &&
         !item.body.includes('Only open to current students')
-      );
+      ).map(item => {
+        const firstParagraphMatch = item.body.match(/<p>(.*?)<\/p>/);
+        if (firstParagraphMatch) {
+          item.body = firstParagraphMatch[1];
+        }
+        return item;
+      });
 
       function presentChoices() {
-        if (filtered.length < 75) {
-          document.getElementById('output').innerHTML = "Here's your top 10!<br>" + filtered.map(item => "<h2>" + item.title + "</h2><br><br>" + item.body).join('\n');
+        if (filtered.length < 5) {
+          document.getElementById('output').innerHTML = "Here's your top 5!<br>" + filtered.map(item => `
+            <div class="output-item">
+              <h2>${item.title}</h2>
+              <p>${item.body}</p>
+            </div>
+          `).join('');
           document.getElementById('choices').innerHTML = '';
           document.getElementById('remaining').innerHTML = '';
           return;
