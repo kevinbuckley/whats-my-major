@@ -89,6 +89,8 @@
       // Filter for items with 'BS' in the program field
       let filtered = data["results"].filter(item =>
         item.program.includes('BS') &&
+        !item.college.includes('Nursing') &&
+        !item.college.includes('School of Education') &&
         !item.body.includes('Only open to current students')
       ).map(item => {
         const firstParagraphMatch = item.body.match(/<p>(.*?)<\/p>/);
